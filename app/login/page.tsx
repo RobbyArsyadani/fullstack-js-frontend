@@ -12,23 +12,18 @@ export default function Login() {
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const user = { username, password };
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(user),
-        }
-      );
-
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+      const result = await res.json();
       if (!res.ok) {
-        throw new Error("Ada kesalahan ketika login");
+        setMessage(result.message || "Login gagal");
+        return;
       }
-
-      setMessage("Kamu berhasil login ✅");
       router.push("/dashboard");
     } catch (e) {
       if (e instanceof Error) setMessage("Login gagal ❌");

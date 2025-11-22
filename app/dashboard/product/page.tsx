@@ -3,11 +3,14 @@
 import { useEffect, useState } from "react";
 import type { Product } from "../../types/type";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Product() {
   const [data, setData] = useState<Product[]>([]);
+  const [token, setToken] = useState<string | null>(null);
   const pathname = usePathname();
+  const router = useRouter();
 
   const getData = async () => {
     try {
@@ -19,16 +22,16 @@ export default function Product() {
       }
       const product = await res.json();
       setData(product.data);
+      console.log(product.data);
+      console.log(
+        `${process.env.NEXT_PUBLIC_API_URL}/uploads/${product.data[0].image_path}`
+      );
     } catch (err) {
       if (err instanceof Error) {
         console.error("Error: ", err.message);
       }
     }
   };
-
-  useEffect(() => {
-    getData();
-  }, []);
 
   const handleDelete = async (id: number) => {
     if (!confirm("Yakin ingin menghapus produk ini?")) return;
@@ -38,6 +41,7 @@ export default function Product() {
         `${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`,
         {
           method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -55,6 +59,10 @@ export default function Product() {
       }
     }
   };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-6">
@@ -83,6 +91,7 @@ export default function Product() {
                 <th className="p-3 border border-gray-200 text-left">
                   Deskripsi
                 </th>
+                <th className="p-3 border border-gray-200 text-left">image</th>
                 <th className="p-3 border border-gray-200 text-center">Aksi</th>
               </tr>
             </thead>
@@ -97,6 +106,15 @@ export default function Product() {
                   </td>
                   <td className="p-3 border border-gray-200">
                     {datas.product_description}
+                  </td>
+                  <td className="p-3 border border-gray-200">
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${datas.image_path}`}
+                      alt={datas.image_path}
+                      width={50}
+                      height={50}
+                      unoptimized
+                    />
                   </td>
                   <td className="p-3 border border-gray-200 text-center space-x-3">
                     <Link

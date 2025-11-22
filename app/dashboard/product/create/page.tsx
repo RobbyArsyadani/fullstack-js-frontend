@@ -2,22 +2,31 @@
 
 import { useState } from "react";
 import Link from "next/link";
+// import { useRouter } from "next/navigation";
 
 export default function CreateProduct() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [message, setMessage] = useState("");
+  // const [token, setToken] = useState<string | null>("");
+  const [image, setImage] = useState<File | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    if (image) {
+      formData.append("image", image);
+    }
 
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/products/addProduct`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, description }),
+          body: formData,
         }
       );
       const result = await res.json();
@@ -64,6 +73,17 @@ export default function CreateProduct() {
               placeholder="Masukkan deskripsi produk"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
+              Product Image
+            </label>
+            <input
+              type="file"
+              placeholder="Masukkan deskripsi produk"
+              onChange={(e) => setImage(e.target.files?.[0] || null)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>

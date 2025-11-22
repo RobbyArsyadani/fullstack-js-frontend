@@ -29,14 +29,17 @@ export default function UserPage() {
   const handleDelete = async (id: number) => {
     if (!confirm("Yakin mau hapus data ini?")) return;
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${id}`, {
-      method: "DELETE",
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
 
     if (!res.ok) {
       console.error("Gagal menghapus data");
     }
-
+    alert("user berhasil dihapus");
     fetchData();
   };
 

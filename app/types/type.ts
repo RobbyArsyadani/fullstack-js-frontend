@@ -8,5 +8,6 @@ export type Product = {
   id: number;
   product_name: string;
   product_description: string;
+  image_path: string;
 };
 

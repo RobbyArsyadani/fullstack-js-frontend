@@ -14,6 +14,8 @@ export default function ProductDetail({
   const { id } = use(params);
 
   useEffect(() => {
+
+    
     const fetchData = async () => {
       try {
         const res = await fetch(
